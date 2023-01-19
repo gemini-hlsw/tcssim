@@ -3,11 +3,13 @@
 
 package tcssim.epics
 
-import cats.effect.{ Async, IO, Resource }
+import cats.effect.{ Async, Resource }
 import cats.effect.std.Dispatcher
+import cats.effect.syntax.all._
 import com.cosylab.epics.caj.cas.util.DefaultServerImpl
 import gov.aps.jca.JCALibrary
 import MemoryPV.ToDBRType
+import org.typelevel.log4cats.Logger
 
 import scala.reflect.ClassTag
 
@@ -23,38 +25,55 @@ object EpicsServer {
 
   val jcaLibrary: JCALibrary = JCALibrary.getInstance()
 
-  private final class EpicsServerImpl[F[_]: Async: Dispatcher](server: DefaultServerImpl)
-      extends EpicsServer[F] {
-
+  private final class EpicsServerImpl[F[_]: Async: Logger](
+    dispatcher: Dispatcher[F],
+    server:     DefaultServerImpl
+  ) extends EpicsServer[F] {
+    implicit val d = dispatcher
     override def createPV[T: ToDBRType](name: String, init: Array[T]): Resource[F, MemoryPV[F, T]] =
-      MemoryPV.build(server, name, init)
+      // MemoryPV.build(server, name, init)
+      for {
+        pv <- MemoryPV.build(server, name, init)
+        st <- pv.valueStream.map(_.evalTap { x =>
+                val s = x.toList.map(_.toString).mkString("[", ", ", "]")
+                Logger[F].info(s"New value for channel $name = $s")
+              })
+        _  <- Resource.make(st.compile.drain.start)(_.cancel)
+      } yield pv
 
     override def createPV1[T: ToDBRType: ClassTag](
       name: String,
       init: T
-    ): Resource[F, MemoryPV1[F, T]] = MemoryPV1.build(server, name, init)
+    ): Resource[F, MemoryPV1[F, T]] =
+      // MemoryPV1.build(server, name, init)
+      for {
+        pv <- MemoryPV1.build(server, name, init)
+        st <-
+          pv.valueStream.map(_.evalTap(x => Logger[F].info(s"New value for channel $name = $x")))
+        _  <- Resource.make(st.compile.drain.start)(_.cancel)
+      } yield pv
 
   }
 
-  def start(implicit dispatcher: Dispatcher[IO]): Resource[IO, EpicsServer[IO]] =
+  def start[F[_]: Async: Logger](dispatcher: Dispatcher[F]): Resource[F, EpicsServer[F]] =
     for {
-      server <- Resource.eval(IO.delay(new DefaultServerImpl()))
+      server <- Resource.eval(Async[F].delay(new DefaultServerImpl()))
       ctx    <- Resource.make {
-                  IO.delay(
+                  Async[F].delay(
                     jcaLibrary.createServerContext(JCALibrary.CHANNEL_ACCESS_SERVER_JAVA, server)
                   )
                 } { x =>
-                  IO.delay(
+                  Async[F].delay(
                     x.dispose()
                   )
                 }
       _      <- Resource.make {
-                  IO.delay(ctx.run(0)).start.void
+                  Async[F].delay(ctx.run(0)).start
                 }(_ =>
-                  IO.delay {
+                  Async[F].delay {
                     ctx.shutdown()
                   }
                 )
-    } yield new EpicsServerImpl[IO](server)
+    } yield new EpicsServerImpl[F](dispatcher, server)
 
 }

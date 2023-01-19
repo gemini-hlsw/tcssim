@@ -4,15 +4,21 @@
 package tcssim
 
 import cats.effect.std.Dispatcher
-import cats.effect.{ ExitCode, IO, IOApp }
+import cats.effect.{ ExitCode, IO, IOApp, Resource }
 import cats.implicits.catsSyntaxEq
 import tcssim.epics.EpicsServer
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.duration.{ DurationInt, FiniteDuration }
 
 object TcsSimApp extends IOApp {
+
+  private implicit def L: Logger[IO] = Slf4jLogger.getLoggerFromName[IO]("tcssim")
+
   override def run(args: List[String]): IO[ExitCode] = {
     val r = for {
+      _   <- Resource.eval(printBanner)
       dsp <- Dispatcher[IO]
       srv <- EpicsServer.start(dsp)
       db  <- TcsEpicsDB.build(srv, "tc1:")
@@ -42,5 +48,17 @@ object TcsSimApp extends IOApp {
         _    <- db.commands.car.VAL.put(CarState.IDLE)
       } yield ()
     else IO.unit
+
+  def printBanner[F[_]: Logger]: F[Unit] = {
+    val banner = """
+  ______             _____ _
+ /_  __/_________   / ___/(_)___ ___
+  / / / ___/ ___/   \__ \/ / __ `__ \
+ / / / /__(__  )   ___/ / / / / / / /
+/_/  \___/____/   /____/_/_/ /_/ /_/
+
+"""
+    Logger[F].info(banner)
+  }
 
 }
