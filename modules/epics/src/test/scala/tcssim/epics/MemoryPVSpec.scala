@@ -8,8 +8,10 @@ import cats.effect.std.Dispatcher
 import cats.syntax.all._
 import munit.CatsEffectSuite
 import MemoryPV.ToDBRType
+import org.typelevel.log4cats.noop.NoOpLogger
 
 class MemoryPVSpec extends CatsEffectSuite {
+  private implicit def logger = NoOpLogger.impl[IO]
 
   private val epicsServer = ResourceFixture {
     for {
