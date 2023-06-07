@@ -2,11 +2,12 @@ import Settings._
 
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
-ThisBuild / scalaVersion := "2.13.8"
+ThisBuild / scalaVersion := "2.13.11"
 
-lazy val epics = project.in(file("./modules/epics"))
+lazy val epics = project
+  .in(file("./modules/epics"))
   .settings(
-    name := "epics",
+    name                     := "epics",
     libraryDependencies ++= Seq(
       Cats.value,
       CatsEffect.value,
@@ -18,14 +19,16 @@ lazy val epics = project.in(file("./modules/epics"))
     Test / parallelExecution := false
   )
 
-lazy val tcssim = project.in(file("./modules/tcssim"))
+lazy val tcssim = project
+  .in(file("./modules/tcssim"))
   .settings(
-    name := "tcssim",
+    name                     := "tcssim",
     libraryDependencies ++= Seq(
       Cats.value,
       CatsEffect.value,
       Fs2
     ) ++ LucumaCore.value ++ MUnit.value ++ Logging.value,
     Test / parallelExecution := false,
-    reStart / mainClass := Some("tcssim.TcsSimApp")
-  ).dependsOn(epics)
+    reStart / mainClass      := Some("tcssim.TcsSimApp")
+  )
+  .dependsOn(epics)
