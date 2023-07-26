@@ -23,6 +23,7 @@ trait TcsCommands[F[_]] {
   val configCmds: ConfigCmds[F]
   val nodchopCmds: NodChopCmds[F]
   val carouselModeCmd: CadRecord1[F]
+  val mountCmds: MountCmds[F]
 }
 
 object TcsCommands {
@@ -46,7 +47,8 @@ object TcsCommands {
     followCmds:          FollowCmds[F],
     configCmds:          ConfigCmds[F],
     nodchopCmds:         NodChopCmds[F],
-    carouselModeCmd:     CadRecord1[F]
+    carouselModeCmd:     CadRecord1[F],
+    mountCmds:           MountCmds[F]
   ) extends TcsCommands[F]
 
   def build[F[_]](server: EpicsServer[F], top: String): Resource[F, TcsCommands[F]] = for {
@@ -66,6 +68,7 @@ object TcsCommands {
     cfgc  <- ConfigCmds.build(server, top)
     ncc   <- NodChopCmds.build(server, top)
     cm    <- CadRecord1.build(server, top + CarouselModeName)
+    mc    <- MountCmds.build(server, top)
   } yield TcsCommandsImpl(apply,
                           car,
                           wfsc,
@@ -81,6 +84,7 @@ object TcsCommands {
                           folc,
                           cfgc,
                           ncc,
-                          cm
+                          cm,
+                          mc
   )
 }
