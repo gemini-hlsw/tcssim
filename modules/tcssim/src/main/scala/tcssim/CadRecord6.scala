@@ -1,10 +1,13 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
+
 import CadUtil._
 
 trait CadRecord6[F[_]] extends CadRecord[F] {
@@ -18,7 +21,7 @@ trait CadRecord6[F[_]] extends CadRecord[F] {
 
 object CadRecord6 {
 
-  final case class CadRecord6Impl[F[_]] private (
+  private case class CadRecord6Impl[F[_]](
     DIR:    MemoryPV1[F, CadDirective],
     inputA: MemoryPV1[F, String],
     inputB: MemoryPV1[F, String],

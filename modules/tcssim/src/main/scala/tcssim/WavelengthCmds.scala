@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -34,7 +34,7 @@ object WavelengthCmds {
   val G3Name: String           = "G3"
   val G4Name: String           = "G4"
 
-  final case class WavelengthCmdsImpl[F[_]] private (
+  private case class WavelengthCmdsImpl[F[_]](
     mount:   CadRecord1[F],
     sourceA: CadRecord1[F],
     sourceB: CadRecord1[F],

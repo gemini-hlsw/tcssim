@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -25,7 +25,7 @@ object NDGuidersTrackConfig {
   val G3Name: String    = "G3"
   val G4Name: String    = "G4"
 
-  final case class NDGuidersTrackConfigImpl[F[_]] private (
+  private case class NDGuidersTrackConfigImpl[F[_]](
     pwfs1: NodChopGuide[F],
     pwfs2: NodChopGuide[F],
     oiwfs: NodChopGuide[F],

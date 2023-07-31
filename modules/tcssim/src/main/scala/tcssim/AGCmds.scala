@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -27,7 +27,7 @@ object AGCmds {
   val Pwfs2Name: String       = "pwfs2"
   val OiwfsName: String       = "oiwfs"
 
-  final case class AGCmdsImpl[F[_]] private (
+  private case class AGCmdsImpl[F[_]](
     scienceFold:      AGMechanismCmds[F],
     scienceFoldDatum: CadRecord[F],
     scienceFoldPark:  CadRecord[F],

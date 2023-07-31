@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 trait PolarLimits[F[_]] {
   val rmax: MemoryPV1[F, Double]
@@ -15,7 +17,7 @@ object PolarLimits {
   val RmaxSuffix: String = "Rmax.VAL"
   val RminSuffix: String = "Rmin.VAL"
 
-  final case class PolarLimitsImpl[F[_]] private (
+  private case class PolarLimitsImpl[F[_]](
     rmax: MemoryPV1[F, Double],
     rmin: MemoryPV1[F, Double]
   ) extends PolarLimits[F]

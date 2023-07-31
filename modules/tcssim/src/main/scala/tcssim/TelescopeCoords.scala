@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.kernel.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 trait TelescopeCoords[F[_]] {
   val tlatm: MemoryPV1[F, Double]
@@ -17,7 +19,7 @@ object TelescopeCoords {
   val TlongmSuffix: String = "tlongm"
   val HeightSuffix: String = "height"
 
-  final case class TelescopeCoordsImpl[F[_]] private (
+  case class TelescopeCoordsImpl[F[_]](
     tlatm:  MemoryPV1[F, Double],
     tlongm: MemoryPV1[F, Double],
     height: MemoryPV1[F, Double]

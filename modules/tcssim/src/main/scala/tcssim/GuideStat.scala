@@ -1,10 +1,13 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
+
 import BinaryOnOff._
 import BinaryYesNo._
 
@@ -39,7 +42,7 @@ object GuideStat {
   val P2IntegratingName: String = "drives:p2Integrating.VAL"
   val OiIntegratingName: String = "drives:oiIntegrating.VAL"
 
-  final case class GuideStatImpl[F[_]] private (
+  private case class GuideStatImpl[F[_]](
     pwfs1:         MemoryPV1[F, String],
     pwfs2:         MemoryPV1[F, String],
     oiwfs:         MemoryPV1[F, String],

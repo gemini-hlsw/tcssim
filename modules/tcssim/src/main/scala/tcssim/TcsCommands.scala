@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -31,7 +31,7 @@ object TcsCommands {
   val CarSuffix: String        = "applyC"
   val CarouselModeName: String = "carouselMode"
 
-  final case class TcsCommandsImpl[F[_]] private (
+  private case class TcsCommandsImpl[F[_]](
     apply:               ApplyRecord[F],
     car:                 CarRecord[F],
     wfsCmds:             WfsCommands[F],

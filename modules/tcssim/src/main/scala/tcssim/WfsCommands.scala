@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -22,7 +22,7 @@ object WfsCommands {
   val P2Prefix: String       = "pwfs2"
   val OiPrefix: String       = "oiwfs"
 
-  final case class WfsCommandsImpl[F[_]] private (
+  private case class WfsCommandsImpl[F[_]](
     p1Observe: CadRecord7[F],
     p1Stop:    CadRecord[F],
     p2Observe: CadRecord7[F],

@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.kernel.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 trait RectLimits[F[_]] {
   val xmax: MemoryPV1[F, Double]
@@ -19,7 +21,7 @@ object RectLimits {
   val YmaxSuffix: String = "Ymax.VAL"
   val YminSuffix: String = "Ymin.VAL"
 
-  final case class RectLimitsImpl[F[_]] private (
+  private case class RectLimitsImpl[F[_]](
     xmax: MemoryPV1[F, Double],
     xmin: MemoryPV1[F, Double],
     ymax: MemoryPV1[F, Double],

@@ -1,22 +1,14 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
-import cats.Eq
 import lucuma.core.util.Enumerated
 
-sealed trait CadDirective extends Product with Serializable
-
-object CadDirective {
-  case object MARK   extends CadDirective
-  case object CLEAR  extends CadDirective
-  case object PRESET extends CadDirective
-  case object START  extends CadDirective
-  case object STOP   extends CadDirective
-
-  implicit val cadDirectiveEq: Eq[CadDirective] = Eq.fromUniversalEquals
-
-  implicit val cadDirectiveEnum: Enumerated[CadDirective] =
-    Enumerated.of(MARK, CLEAR, PRESET, START, STOP)
+enum CadDirective(val tag: String) derives Enumerated {
+  case MARK   extends CadDirective("MARK")
+  case CLEAR  extends CadDirective("CLEAR")
+  case PRESET extends CadDirective("PRESET")
+  case START  extends CadDirective("START")
+  case STOP   extends CadDirective("STOP")
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -27,7 +27,7 @@ object GuideCmds {
   val M2GuideConfigSuffix: String = "m2GuideConfig"
   val M2GuideResetSuffix: String  = "m2GuideReset"
 
-  final case class GuideCmdsImpl[F[_]] private (
+  private case class GuideCmdsImpl[F[_]](
     m1Guide:       CadRecord1[F],
     m1GuideConfig: CadRecord4[F],
     mountGuide:    CadRecord4[F],

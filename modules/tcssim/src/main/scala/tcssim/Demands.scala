@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 trait Demands[F[_]] {
   val demandAz: MemoryPV1[F, Double]
@@ -21,7 +23,7 @@ object Demands {
   val DemandRASuffix: String  = "demandRA.VAL"
   val DemandDecSuffix: String = "demandDec.VAL"
 
-  final case class DemandsImpl[F[_]] private (
+  private case class DemandsImpl[F[_]](
     demandAz:  MemoryPV1[F, Double],
     demandEl:  MemoryPV1[F, Double],
     demandRma: MemoryPV1[F, Double],

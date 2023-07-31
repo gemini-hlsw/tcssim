@@ -5,22 +5,23 @@ object Settings {
 
   object LibraryVersion {
     // Scala libraries
-    lazy val catsEffect = "3.3.11"
-    lazy val cats       = "2.7.0"
+    lazy val catsEffect = "3.5.1"
+    lazy val cats       = "2.9.0"
     lazy val mouse      = "1.0.7"
-    lazy val fs2        = "3.2.4"
+    lazy val fs2        = "3.7.0"
+    lazy val kittens    = "3.0.0"
 
     lazy val munit           = "0.7.29"
-    lazy val munitCatsEffect = "1.0.6"
+    lazy val munitCatsEffect = "1.0.7"
     lazy val munitDiscipline = "1.0.9"
 
     // EPICS Libraries
     lazy val jca = "2.4.6"
 
     // Lucuma
-    lazy val lucumaCore = "0.28.0"
+    lazy val lucumaCore = "0.82.0"
 
-    val slf4j    = "2.0.5"
+    val slf4j    = "2.0.7"
     val log4s    = "1.10.0"
     val log4cats = "2.5.0"
     val logback  = "1.4.8"
@@ -38,6 +39,7 @@ object Settings {
   val EpicsJCA = "org.epics" % "jca" % LibraryVersion.jca
 
   val Cats         = Def.setting("org.typelevel" %%% "cats-core" % LibraryVersion.cats)
+  val Kittens      = Def.setting("org.typelevel" %%% "kittens" % LibraryVersion.kittens)
   val CatsEffect   =
     Def.setting("org.typelevel" %%% "cats-effect" % LibraryVersion.catsEffect)
   val Fs2          = "co.fs2"   %% "fs2-core"     % LibraryVersion.fs2

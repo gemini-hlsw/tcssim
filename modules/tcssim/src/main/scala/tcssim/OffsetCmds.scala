@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -23,7 +23,7 @@ object OffsetCmds {
   val OffsetPoCSuffix: String  = "offsetPoC"
   val OffsetPoC1Suffix: String = "offsetPoC1"
 
-  final case class OffsetCmdsImpl[F[_]] private (
+  private case class OffsetCmdsImpl[F[_]](
     offsetPoA:  CadRecord2[F],
     offsetPoA1: CadRecord2[F],
     offsetPoB:  CadRecord2[F],

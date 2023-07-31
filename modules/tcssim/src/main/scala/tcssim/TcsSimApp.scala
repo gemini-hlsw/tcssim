@@ -1,16 +1,20 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
+import cats.effect.ExitCode
+import cats.effect.IO
+import cats.effect.IOApp
+import cats.effect.Resource
 import cats.effect.std.Dispatcher
-import cats.effect.{ ExitCode, IO, IOApp, Resource }
 import cats.implicits.catsSyntaxEq
-import tcssim.epics.EpicsServer
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
+import tcssim.epics.EpicsServer
 
-import scala.concurrent.duration.{ DurationInt, FiniteDuration }
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.FiniteDuration
 
 object TcsSimApp extends IOApp {
 
@@ -19,8 +23,8 @@ object TcsSimApp extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = {
     val r = for {
       _   <- Resource.eval(printBanner)
-      dsp <- Dispatcher[IO]
-      srv <- EpicsServer.start(dsp)
+      dsp <- Dispatcher.parallel[IO]
+      srv <- EpicsServer.start[IO](dsp)
       db  <- TcsEpicsDB.build(srv, "tc1:")
     } yield db
 

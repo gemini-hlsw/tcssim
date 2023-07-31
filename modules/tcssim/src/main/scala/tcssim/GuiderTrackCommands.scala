@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -26,7 +26,7 @@ object GuiderTrackCommands {
   val G3Name: String       = "G3"
   val G4Name: String       = "G4"
 
-  final case class GuiderTrackCommandsImpl[F[_]] private (
+  private case class GuiderTrackCommandsImpl[F[_]](
     pwfs1: CadRecord9[F],
     pwfs2: CadRecord9[F],
     oiwfs: CadRecord9[F],

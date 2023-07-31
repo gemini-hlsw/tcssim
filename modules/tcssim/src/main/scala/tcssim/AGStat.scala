@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 trait AGStat[F[_]] {
   val hrPark: MemoryPV1[F, String]
@@ -13,7 +15,7 @@ trait AGStat[F[_]] {
 object AGStat {
   val HrParkName: String = "drives:agHwName.VAL"
 
-  final case class AGStatImpl[F[_]] private (
+  private case class AGStatImpl[F[_]](
     hrPark: MemoryPV1[F, String]
   ) extends AGStat[F]
 

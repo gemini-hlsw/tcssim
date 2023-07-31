@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -25,7 +25,7 @@ object GemsCmds {
   val Odgw3ParkSuffix: String  = "odgw3Park"
   val Odgw4ParkSuffix: String  = "odgw4Park"
 
-  final case class GemsCmdsImpl[F[_]] private (
+  private case class GemsCmdsImpl[F[_]](
     ngsPr1Ctrl: CadRecord1[F],
     ngsPr2Ctrl: CadRecord1[F],
     ngsPr3Ctrl: CadRecord1[F],

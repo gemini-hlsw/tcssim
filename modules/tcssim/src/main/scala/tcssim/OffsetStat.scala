@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 trait OffsetStat[F[_]] {
   val xOffsetPoA1: MemoryPV1[F, Double]
@@ -23,7 +25,7 @@ object OffsetStat {
   val XOffsetPoC1Name: String = "offsetPoC1.VALA"
   val YOffsetPoC1Name: String = "offsetPoC1.VALB"
 
-  final case class OffsetStatImpl[F[_]] private (
+  private case class OffsetStatImpl[F[_]](
     xOffsetPoA1: MemoryPV1[F, Double],
     yOffsetPoA1: MemoryPV1[F, Double],
     xOffsetPoB1: MemoryPV1[F, Double],

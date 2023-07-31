@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -13,7 +13,7 @@ trait MountCmds[F[_]] {
 object MountCmds {
   val mountParkSuffix: String = "telpark"
 
-  final case class MountCmdsImpl[F[_]] private (
+  private case class MountCmdsImpl[F[_]](
     park: CadRecord[F]
   ) extends MountCmds[F]
 

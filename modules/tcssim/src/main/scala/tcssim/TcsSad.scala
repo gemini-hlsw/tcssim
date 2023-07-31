@@ -1,10 +1,13 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 sealed trait TcsSad[F[_]] {
   val state: MemoryPV1[F, String]
@@ -60,7 +63,7 @@ object TcsSad {
   val InstrPASuffix: String        = "instrPA.VAL"
   val M2UserOffsetSuffix: String   = "m2ZUserOffset.VAL"
 
-  final case class TcsSadImpl[F[_]] private (
+  private case class TcsSadImpl[F[_]](
     state:                 MemoryPV1[F, String],
     health:                MemoryPV1[F, String],
     heartbeat:             MemoryPV1[F, Int],

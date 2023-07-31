@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 trait DomeVignette[F[_]] {
   val domeVignette: MemoryPV1[F, Double]
@@ -15,7 +17,7 @@ object DomeVignette {
   val DomeVignetteSuffix: String     = "domeVignette.VAL"
   val DomeVignetteTimeSuffix: String = "timeToDomeLimit.VAL"
 
-  final case class DomeVignetteImpl[F[_]] private (
+  private case class DomeVignetteImpl[F[_]](
     domeVignette:     MemoryPV1[F, Double],
     domeVignetteTime: MemoryPV1[F, Double]
   ) extends DomeVignette[F]

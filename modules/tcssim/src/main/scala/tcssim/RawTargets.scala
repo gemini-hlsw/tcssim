@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV
+import tcssim.epics.given
 
 trait RawTargets[F[_]] {
   val targetA: MemoryPV[F, Double]
@@ -32,7 +34,7 @@ object RawTargets {
   val TargetG4Suffix: String    = "targetG4.VAL"
   val TargetLength: Int         = 8
 
-  final case class RawTargetsImpl[F[_]] private (
+  private case class RawTargetsImpl[F[_]](
     targetA:     MemoryPV[F, Double],
     targetB:     MemoryPV[F, Double],
     targetC:     MemoryPV[F, Double],

@@ -1,10 +1,11 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
 import tcssim.epics._
+import tcssim.epics.given
 
 trait CarRecord[F[_]] {
   val VAL: MemoryPV1[F, CarState]
@@ -13,7 +14,7 @@ trait CarRecord[F[_]] {
 }
 
 object CarRecord {
-  final case class CarRecordImpl[F[_]] private (
+  private case class CarRecordImpl[F[_]](
     VAL:  MemoryPV1[F, CarState],
     CLID: MemoryPV1[F, Int],
     OMSS: MemoryPV1[F, String]

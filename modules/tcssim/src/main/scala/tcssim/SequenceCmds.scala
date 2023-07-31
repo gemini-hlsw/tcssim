@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -27,7 +27,7 @@ object SequenceCmds {
   val PauseSuffix: String      = "pause"
   val ContinueSuffix: String   = "continue"
 
-  final case class SequenceCmdsImpl[F[_]] private (
+  case class SequenceCmdsImpl[F[_]](
     verify:     CadRecord[F],
     test:       CadRecord[F],
     observe:    CadRecord[F],

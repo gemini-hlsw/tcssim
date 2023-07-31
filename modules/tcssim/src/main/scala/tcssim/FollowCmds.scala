@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -37,7 +37,7 @@ object FollowCmds {
   val Odgw3Suffix: String   = "odgw3Follow"
   val Odgw4Suffix: String   = "odgw4Follow"
 
-  final case class FollowCmdsImpl[F[_]] private (
+  private case class FollowCmdsImpl[F[_]](
     mount:   CadRecord1[F],
     rotator: CadRecord1[F],
     pwfs1:   CadRecord1[F],

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -21,7 +21,7 @@ object ConfigCmds {
   val ChopRelativeName: String = "chopRelative"
   val ChopConfigName: String   = "chopConfig"
 
-  final case class ConfigCmdsImpl[F[_]] private (
+  private case class ConfigCmdsImpl[F[_]](
     slew:         CadRecord16[F],
     rotator:      CadRecord4[F],
     filter1:      CadRecord4[F],

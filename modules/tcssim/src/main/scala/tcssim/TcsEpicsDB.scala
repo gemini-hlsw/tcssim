@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -12,7 +12,7 @@ trait TcsEpicsDB[F[_]] {
 }
 
 object TcsEpicsDB {
-  final case class TcsEpicsDBImpl[F[_]] private (
+  private case class TcsEpicsDBImpl[F[_]](
     status:   TcsSad[F],
     commands: TcsCommands[F]
   ) extends TcsEpicsDB[F]

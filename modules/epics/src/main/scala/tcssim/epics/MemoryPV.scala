@@ -1,17 +1,22 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim.epics
 
-import cats.effect.{ Async, Resource }
+import cats.effect.Async
+import cats.effect.Resource
+import cats.effect.std.Dispatcher
+import cats.effect.std.Queue
 import cats.syntax.all._
-import com.cosylab.epics.caj.cas.util.{ DefaultServerImpl, MemoryProcessVariable }
-import fs2.Stream
-import cats.effect.std.{ Dispatcher, Queue }
 import com.cosylab.epics.caj.cas.ProcessVariableEventDispatcher
+import com.cosylab.epics.caj.cas.util.DefaultServerImpl
+import com.cosylab.epics.caj.cas.util.MemoryProcessVariable
+import fs2.Stream
 import gov.aps.jca.Monitor
 import gov.aps.jca.cas.ProcessVariableEventCallback
-import gov.aps.jca.dbr.{ DBR, DBRType, TIME }
+import gov.aps.jca.dbr.DBR
+import gov.aps.jca.dbr.DBRType
+import gov.aps.jca.dbr.TIME
 
 trait MemoryPV[F[_], T] {
   val get: F[Array[T]]
@@ -28,13 +33,13 @@ object MemoryPV {
     def toEpicsVal(v:      Array[T]): Dbr
     def fromEpicsValue(v:  Dbr): Array[T]
     def extractOption(dbr: DBR): Option[Array[T]]
-    def initValue(v: Array[T]): Object = v
-    val enumLabels: Array[String]      = Array.empty
+    def initValue(v:       Array[T]): Object = v
+    val enumLabels: Array[String] = Array.empty
   }
 
   def build[F[_]: Async, T](server: DefaultServerImpl, name: String, init: Array[T])(implicit
-    toDBRType:                      ToDBRType[T],
-    dispatcher:                     Dispatcher[F]
+    toDBRType:  ToDBRType[T],
+    dispatcher: Dispatcher[F]
   ): Resource[F, MemoryPV[F, T]] = for {
     mpv <- Resource.make {
              Async[F].delay {

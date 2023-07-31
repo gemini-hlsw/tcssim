@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -30,7 +30,7 @@ object PwfsProbeCmds {
   val FieldStopSuffix: String = "Fldstop"
   val FocusName: String       = "Focus"
 
-  final case class PwfsProbeCmdsImpl[F[_]] private (
+  private case class PwfsProbeCmdsImpl[F[_]](
     park:       CadRecord[F],
     datum:      CadRecord[F],
     flip:       CadRecord[F],

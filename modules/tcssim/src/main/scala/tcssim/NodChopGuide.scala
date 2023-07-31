@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
 
 import cats.effect.Resource
-import tcssim.epics.{ EpicsServer, MemoryPV1 }
+import tcssim.epics.EpicsServer
+import tcssim.epics.MemoryPV1
+import tcssim.epics.given
 
 trait NodChopGuide[F[_]] {
   val nodachopa: MemoryPV1[F, String]
@@ -49,7 +51,7 @@ object NodChopGuide {
   val NodcchopbDrvSuffix: String = "nodCchopB.VAL"
   val NodcchopcDrvSuffix: String = "nodCchopC.VAL"
 
-  final case class NodChopGuideImpl[F[_]] private (
+  private case class NodChopGuideImpl[F[_]](
     nodachopa:    MemoryPV1[F, String],
     nodachopb:    MemoryPV1[F, String],
     nodachopc:    MemoryPV1[F, String],

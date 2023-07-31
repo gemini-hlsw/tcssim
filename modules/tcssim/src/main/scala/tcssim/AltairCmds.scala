@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
+// Copyright (c) 2016-2023 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
 package tcssim
@@ -46,7 +46,7 @@ object AltairCmds {
   val AoFLensSuffix: String        = "aoMoveAStar"
   val AoStatsSuffix: String        = "aoStats"
 
-  final case class AltairCmdsImpl[F[_]] private (
+  private case class AltairCmdsImpl[F[_]](
     configForAo:    CadRecord1[F],
     aoDeployAdc:    CadRecord1[F],
     aoMoveGim:      CadRecord3[F],
