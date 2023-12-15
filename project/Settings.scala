@@ -16,7 +16,7 @@ object Settings {
     lazy val munitDiscipline = "1.0.9"
 
     // EPICS Libraries
-    lazy val jca = "2.4.8"
+    lazy val jca = "2.4.9"
 
     // Lucuma
     lazy val lucumaCore = "0.89.1"
