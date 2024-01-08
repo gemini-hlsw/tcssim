@@ -21,7 +21,7 @@ object Settings {
     // Lucuma
     lazy val lucumaCore = "0.89.1"
 
-    val slf4j    = "2.0.9"
+    val slf4j    = "2.0.11"
     val log4s    = "1.10.0"
     val log4cats = "2.6.0"
     val logback  = "1.4.12"
