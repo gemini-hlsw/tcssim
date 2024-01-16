@@ -5,7 +5,7 @@ object Settings {
 
   object LibraryVersion {
     // Scala libraries
-    lazy val catsEffect = "3.5.2"
+    lazy val catsEffect = "3.5.3"
     lazy val cats       = "2.10.0"
     lazy val mouse      = "1.2.2"
     lazy val fs2        = "3.9.2"
