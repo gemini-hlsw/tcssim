@@ -11,7 +11,7 @@ object Settings {
     lazy val fs2        = "3.11.0"
     lazy val kittens    = "3.4.0"
 
-    lazy val munit           = "1.0.2"
+    lazy val munit           = "1.0.3"
     lazy val munitCatsEffect = "2.0.0"
     lazy val munitDiscipline = "2.0.0"
 
