@@ -8,7 +8,7 @@ object Settings {
     lazy val catsEffect = "3.5.4"
     lazy val cats       = "2.12.0"
     lazy val mouse      = "1.3.2"
-    lazy val fs2        = "3.11.0"
+    lazy val fs2        = "3.12.0"
     lazy val kittens    = "3.4.0"
 
     lazy val munit           = "1.0.2"
