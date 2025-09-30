@@ -24,7 +24,7 @@ object Settings {
     val slf4j    = "2.0.17"
     val log4s    = "1.10.0"
     val log4cats = "2.7.0"
-    val logback  = "1.5.18"
+    val logback  = "1.5.19"
     val janino   = "3.1.12"
   }
 
