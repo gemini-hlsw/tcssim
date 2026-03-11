@@ -12,7 +12,7 @@ object Settings {
     lazy val kittens    = "3.5.0"
 
     lazy val munit           = "1.1.1"
-    lazy val munitCatsEffect = "2.1.0"
+    lazy val munitCatsEffect = "2.2.0"
     lazy val munitDiscipline = "2.0.0"
 
     // EPICS Libraries
