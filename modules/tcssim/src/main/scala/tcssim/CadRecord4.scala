@@ -13,6 +13,7 @@ import CadUtil.*
 
 trait CadRecord4[F[_]] extends CadRecord3[F] {
   val inputD: MemoryPV1[F, String]
+  val outputD: MemoryPV1[F, String]
 
   override def inputs: List[MemoryPV1[F, String]] = super.inputs :+ inputD
 }
@@ -20,12 +21,16 @@ trait CadRecord4[F[_]] extends CadRecord3[F] {
 object CadRecord4 {
 
   private case class CadRecord4Impl[F[_]: Monad](
-    DIR:               MemoryPV1[F, CadDirective],
-    override val MARK: MemoryPV1[F, Int],
-    inputA:            MemoryPV1[F, String],
-    inputB:            MemoryPV1[F, String],
-    inputC:            MemoryPV1[F, String],
-    inputD:            MemoryPV1[F, String]
+    override val DIR:     MemoryPV1[F, CadDirective],
+    override val MARK:    MemoryPV1[F, Int],
+    override val inputA:  MemoryPV1[F, String],
+    override val inputB:  MemoryPV1[F, String],
+    override val inputC:  MemoryPV1[F, String],
+    override val inputD:  MemoryPV1[F, String],
+    override val outputA: MemoryPV1[F, String],
+    override val outputB: MemoryPV1[F, String],
+    override val outputC: MemoryPV1[F, String],
+    override val outputD: MemoryPV1[F, String]
   ) extends CadRecord.CadRecordImpl[F]
       with CadRecord4[F]
 
@@ -39,5 +44,9 @@ object CadRecord4 {
     b    <- server.createPV1(cadName + InputBSuffix, "")
     c    <- server.createPV1(cadName + InputCSuffix, "")
     d    <- server.createPV1(cadName + InputDSuffix, "")
-  } yield CadRecord4Impl(dir, mark, a, b, c, d)
+    vala <- server.createPV1(cadName + OutputASuffix, "")
+    valb <- server.createPV1(cadName + OutputBSuffix, "")
+    valc <- server.createPV1(cadName + OutputCSuffix, "")
+    vald <- server.createPV1(cadName + OutputDSuffix, "")
+  } yield CadRecord4Impl(dir, mark, a, b, c, d, vala, valb, valc, vald)
 }
