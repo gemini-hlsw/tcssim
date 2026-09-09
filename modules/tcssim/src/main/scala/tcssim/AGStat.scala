@@ -22,4 +22,5 @@ object AGStat {
   def build[F[_]](server: EpicsServer[F], top: String): Resource[F, AGStat[F]] = for {
     hrpark <- server.createPV1(top + HrParkName, "Out")
   } yield AGStatImpl(hrpark)
+
 }

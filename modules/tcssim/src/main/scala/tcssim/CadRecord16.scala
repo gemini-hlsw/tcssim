@@ -16,6 +16,10 @@ trait CadRecord16[F[_]] extends CadRecord12[F] {
   val inputN: MemoryPV1[F, String]
   val inputO: MemoryPV1[F, String]
   val inputP: MemoryPV1[F, String]
+  val outputM: MemoryPV1[F, String]
+  val outputN: MemoryPV1[F, String]
+  val outputO: MemoryPV1[F, String]
+  val outputP: MemoryPV1[F, String]
   override def inputs: List[MemoryPV1[F, String]] =
     super.inputs ++ List(inputM, inputN, inputO, inputP)
 }
@@ -23,24 +27,40 @@ trait CadRecord16[F[_]] extends CadRecord12[F] {
 object CadRecord16 {
 
   private case class CadRecord16Impl[F[_]: Monad](
-    DIR:               MemoryPV1[F, CadDirective],
-    override val MARK: MemoryPV1[F, Int],
-    inputA:            MemoryPV1[F, String],
-    inputB:            MemoryPV1[F, String],
-    inputC:            MemoryPV1[F, String],
-    inputD:            MemoryPV1[F, String],
-    inputE:            MemoryPV1[F, String],
-    inputF:            MemoryPV1[F, String],
-    inputG:            MemoryPV1[F, String],
-    inputH:            MemoryPV1[F, String],
-    inputI:            MemoryPV1[F, String],
-    inputJ:            MemoryPV1[F, String],
-    inputK:            MemoryPV1[F, String],
-    inputL:            MemoryPV1[F, String],
-    inputM:            MemoryPV1[F, String],
-    inputN:            MemoryPV1[F, String],
-    inputO:            MemoryPV1[F, String],
-    inputP:            MemoryPV1[F, String]
+    override val DIR:     MemoryPV1[F, CadDirective],
+    override val MARK:    MemoryPV1[F, Int],
+    override val inputA:  MemoryPV1[F, String],
+    override val inputB:  MemoryPV1[F, String],
+    override val inputC:  MemoryPV1[F, String],
+    override val inputD:  MemoryPV1[F, String],
+    override val inputE:  MemoryPV1[F, String],
+    override val inputF:  MemoryPV1[F, String],
+    override val inputG:  MemoryPV1[F, String],
+    override val inputH:  MemoryPV1[F, String],
+    override val inputI:  MemoryPV1[F, String],
+    override val inputJ:  MemoryPV1[F, String],
+    override val inputK:  MemoryPV1[F, String],
+    override val inputL:  MemoryPV1[F, String],
+    override val inputM:  MemoryPV1[F, String],
+    override val inputN:  MemoryPV1[F, String],
+    override val inputO:  MemoryPV1[F, String],
+    override val inputP:  MemoryPV1[F, String],
+    override val outputA: MemoryPV1[F, String],
+    override val outputB: MemoryPV1[F, String],
+    override val outputC: MemoryPV1[F, String],
+    override val outputD: MemoryPV1[F, String],
+    override val outputE: MemoryPV1[F, String],
+    override val outputF: MemoryPV1[F, String],
+    override val outputG: MemoryPV1[F, String],
+    override val outputH: MemoryPV1[F, String],
+    override val outputI: MemoryPV1[F, String],
+    override val outputJ: MemoryPV1[F, String],
+    override val outputK: MemoryPV1[F, String],
+    override val outputL: MemoryPV1[F, String],
+    override val outputM: MemoryPV1[F, String],
+    override val outputN: MemoryPV1[F, String],
+    override val outputO: MemoryPV1[F, String],
+    override val outputP: MemoryPV1[F, String]
   ) extends CadRecord.CadRecordImpl[F]
       with CadRecord16[F]
 
@@ -66,6 +86,56 @@ object CadRecord16 {
     n    <- server.createPV1(cadName + InputNSuffix, "")
     o    <- server.createPV1(cadName + InputOSuffix, "")
     p    <- server.createPV1(cadName + InputPSuffix, "")
-  } yield CadRecord16Impl(dir, mark, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+    vala <- server.createPV1(cadName + OutputASuffix, "")
+    valb <- server.createPV1(cadName + OutputBSuffix, "")
+    valc <- server.createPV1(cadName + OutputCSuffix, "")
+    vald <- server.createPV1(cadName + OutputDSuffix, "")
+    vale <- server.createPV1(cadName + OutputESuffix, "")
+    valf <- server.createPV1(cadName + OutputFSuffix, "")
+    valg <- server.createPV1(cadName + OutputGSuffix, "")
+    valh <- server.createPV1(cadName + OutputHSuffix, "")
+    vali <- server.createPV1(cadName + OutputISuffix, "")
+    valj <- server.createPV1(cadName + OutputJSuffix, "")
+    valk <- server.createPV1(cadName + OutputKSuffix, "")
+    vall <- server.createPV1(cadName + OutputLSuffix, "")
+    valm <- server.createPV1(cadName + OutputMSuffix, "")
+    valn <- server.createPV1(cadName + OutputNSuffix, "")
+    valo <- server.createPV1(cadName + OutputOSuffix, "")
+    valp <- server.createPV1(cadName + OutputPSuffix, "")
+  } yield CadRecord16Impl(dir,
+                          mark,
+                          a,
+                          b,
+                          c,
+                          d,
+                          e,
+                          f,
+                          g,
+                          h,
+                          i,
+                          j,
+                          k,
+                          l,
+                          m,
+                          n,
+                          o,
+                          p,
+                          vala,
+                          valb,
+                          valc,
+                          vald,
+                          vale,
+                          valf,
+                          valg,
+                          valh,
+                          vali,
+                          valj,
+                          valk,
+                          vall,
+                          valm,
+                          valn,
+                          valo,
+                          valp
+  )
 
 }
