@@ -14,9 +14,9 @@ import fs2.Stream
 import mouse.boolean.*
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import tcssim.behavior.Behavior
 import tcssim.behavior.GuiderBehavior
 import tcssim.behavior.TargetBehavior
+import tcssim.behavior.WfsSaveBehavior
 import tcssim.epics.EpicsServer
 import tcssim.epics.MemoryPV1
 
@@ -36,7 +36,7 @@ object TcsSimApp extends IOApp {
       ag   <- AGEpicsDB.build(srv, "ag:")
       crcs <- BaseSystemDB.build(srv, "cr:")
       mcs  <- BaseSystemDB.build(srv, "mc:")
-      scs  <- BaseSystemDB.build(srv, "m2:")
+      scs  <- ScsDB.build(srv, "m2:")
       p1   <- WfsDB.build(
                 srv,
                 "pwfs1:",
@@ -49,28 +49,33 @@ object TcsSimApp extends IOApp {
                 "dc:fgDiag1P2.VALQ",
                 "dc:fgDiag1P2.VALB"
               )
-      oi   <- WfsDB.build(
+      oi   <- OiwfsDB.build(
                 srv,
-                "oiwfs:",
-                "dc:fgDiag1P2.VALQ",
-                "dc:fgDiag1P2.VALB",
-                "dc:initSigInitFgGain.PROC",
-                "dc:seeing.VAL"
+                "oiwfs:"
+              )
+      gmoi <- OiwfsDB.build(
+                srv,
+                "gmoi:"
+              )
+      f2oi <- OiwfsDB.build(
+                srv,
+                "f2oi:"
               )
       ac   <- AcDB.build(srv, "hrwfs:")
       ret  <- List(
                 tcs.process,
                 tcs.commands.apply.DIR.valueStream
-                  .map(_.evalMap(_.map(carActivity(tcs)).getOrElse(IO.unit)))
+                  .map(_.evalMap(_.map(carActivity(tcs, p1, p2, oi, gmoi, f2oi)).getOrElse(IO.unit)))
                   .map(List(_)),
                 fullInpositionActivity(tcs, mcs, crcs).map(List(_)),
-                ag.process,
                 crcs.process,
                 mcs.process,
                 scs.process,
                 p1.process,
                 p2.process,
                 oi.process,
+                gmoi.process,
+                f2oi.process,
                 ac.process
               ).sequence
     } yield ret.flatten
@@ -82,20 +87,27 @@ object TcsSimApp extends IOApp {
 
   val BusyTime: FiniteDuration = 1.seconds
 
-  def carActivity(db: TcsEpicsDB[IO])(dir: CadDirective): IO[Unit] =
+  def carActivity(
+    db:   TcsEpicsDB[IO],
+    p1:   WfsDB[IO],
+    p2:   WfsDB[IO],
+    oi:   OiwfsDB[IO],
+    gmoi: OiwfsDB[IO],
+    f2oi: OiwfsDB[IO]
+  )(dir: CadDirective): IO[Unit] =
     if (dir === CadDirective.START)
       for {
-        clid <- db.commands.apply.CLID.getOption.map(_.getOrElse(0))
-        _    <- db.commands.apply.CLID.put(clid + 1)
-        _    <- db.commands.apply.VAL.put(clid + 1)
-        _    <- db.commands.apply.MESS.put("")
-        _    <- db.commands.car.CLID.put(clid + 1)
-        _    <- db.commands.car.OMSS.put("")
-        _    <- db.commands.car.VAL.put(CarState.BUSY)
-        _    <- runBehaviors(db)
-        _    <- db.clean
-        _    <- IO.sleep(BusyTime)
-        _    <- db.commands.car.VAL.put(CarState.IDLE)
+        newClid <- db.commands.apply.CLID.getOption.map(x => Math.max(1, x.getOrElse(0) + 1))
+        _       <- db.commands.apply.CLID.put(newClid)
+        _       <- db.commands.apply.VAL.put(newClid)
+        _       <- db.commands.apply.MESS.put("")
+        _       <- db.commands.car.CLID.put(newClid)
+        _       <- db.commands.car.OMSS.put("")
+        _       <- db.commands.car.VAL.put(CarState.BUSY)
+        _       <- runBehaviors(db, p1, p2, oi, gmoi, f2oi)
+        _       <- db.clean
+        _       <- IO.sleep(BusyTime)
+        _       <- db.commands.car.VAL.put(CarState.IDLE)
       } yield ()
     else IO.unit
 
@@ -152,10 +164,22 @@ object TcsSimApp extends IOApp {
     Logger[F].info(banner)
   }
 
-  private val behaviors: List[Behavior[IO]] =
-    TargetBehavior.allTargets[IO] :+ GuiderBehavior.behavior[IO]
-
-  private def runBehaviors(db: TcsEpicsDB[IO]): IO[Unit] =
-    behaviors.map(_.process(db)).parSequence.void
+  private def runBehaviors(
+    db:   TcsEpicsDB[IO],
+    p1:   WfsDB[IO],
+    p2:   WfsDB[IO],
+    oi:   OiwfsDB[IO],
+    gmoi: OiwfsDB[IO],
+    f2oi: OiwfsDB[IO]
+  ): IO[Unit] =
+    (TargetBehavior.allTargets[IO](db) ++
+      List(
+        GuiderBehavior.build[IO](db),
+        WfsSaveBehavior.build(p1.commands, p1.status),
+        WfsSaveBehavior.build(p2.commands, p2.status),
+        WfsSaveBehavior.build(oi.wfsCommands, oi.status),
+        WfsSaveBehavior.build(gmoi.wfsCommands, gmoi.status),
+        WfsSaveBehavior.build(f2oi.wfsCommands, f2oi.status)
+      )).map(_.process).parSequence.void
 
 }

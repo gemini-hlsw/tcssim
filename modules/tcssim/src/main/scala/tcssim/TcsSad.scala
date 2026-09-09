@@ -45,6 +45,13 @@ sealed trait TcsSad[F[_]] {
   val m2UserOffset: MemoryPV1[F, Double]
   val defocus: MemoryPV1[F, Double]
   val nodState: MemoryPV1[F, String]
+  val targetA: MemoryPV[F, Double]
+  val targetPwfs1: MemoryPV[F, Double]
+  val targetPwfs2: MemoryPV[F, Double]
+  val targetOiwfs: MemoryPV[F, Double]
+  val pointingCorrections: PointingCorrectionReadout[F]
+  val pwfs1Mechs: PwfsMechsCommands[F]
+  val pwfs2Mechs: PwfsMechsCommands[F]
 }
 
 object TcsSad {
@@ -66,6 +73,10 @@ object TcsSad {
   val M2UserOffsetSuffix: String   = "m2ZUserOffset.VAL"
   val DefocusSuffix: String        = "dtelFocus.VALB"
   val NodStateName: String         = "nodState.VAL"
+  val TargetAName: String          = "targetA.VAL"
+  val TargetPwfs1Name: String      = "targetPwfs1.VAL"
+  val TargetPwfs2Name: String      = "targetPwfs2.VAL"
+  val TargetOiwfsName: String      = "targetOiwfs.VAL"
 
   def build[F[_]](server: EpicsServer[F], top: String): Resource[F, TcsSad[F]] = for {
     st    <- server.createPV1(top + SadPrefix + StateSuffix, "RUNNING")
@@ -103,41 +114,55 @@ object TcsSad {
     m2of  <- server.createPV1(top + SadPrefix + M2UserOffsetSuffix, 0.0)
     df    <- server.createPV1(top + DefocusSuffix, 0.0)
     ns    <- server.createPV1(top + SadPrefix + NodStateName, "A")
-  } yield new TcsSad {
-    override val state: MemoryPV1[F, String]                    = st
-    override val health: MemoryPV1[F, String]                   = hlt
-    override val heartbeat: MemoryPV1[F, Int]                   = hb
-    override val programID: MemoryPV1[F, String]                = pid
-    override val trackingLimits: TrackLimits[F]                 = tl
-    override val targets: AllTargets[F]                         = ts
-    override val sourceADiffRA: MemoryPV1[F, Double]            = dra
-    override val sourceADiffDec: MemoryPV1[F, Double]           = ddec
-    override val demands: Demands[F]                            = dms
-    override val currentCoords: CurrentCoords[F]                = ccs
-    override val rotTrackFrame: MemoryPV1[F, String]            = rtf
-    override val domeVignette: DomeVignette[F]                  = dv
-    override val times: Times[F]                                = t
-    override val astCtx: MemoryPV[F, Double]                    = actx
-    override val telCoords: TelescopeCoords[F]                  = tcoo
-    override val probeLimits: ProbeLimits[F]                    = prl
-    override val rawTargets: RawTargets[F]                      = rts
-    override val inPosition: MemoryPV1[F, String]               = inp
-    override val virtualGuidersMap: VirtualGuidersMap[F]        = vgm
-    override val guidersTrackingConfig: NDGuidersTrackConfig[F] = gtc
-    override val follows: FollowStat[F]                         = fls
-    override val parAngle: MemoryPV1[F, Double]                 = pa
-    override val agInPosCalc: MemoryPV1[F, Double]              = agip
-    override val altair: AltairStat[F]                          = altr
-    override val guide: GuideStat[F]                            = gdst
-    override val nodChopStat: NodChopStat[F]                    = ncst
-    override val agStat: AGStat[F]                              = agst
-    override val odgwParkStat: OdgwPark[F]                      = odprk
-    override val offsetStat: OffsetStat[F]                      = offs
-    override val instrAA: MemoryPV1[F, Double]                  = iaa
-    override val instrPA: MemoryPV1[F, Double]                  = ipa
-    override val airmass: Airmass[F]                            = am
-    override val m2UserOffset: MemoryPV1[F, Double]             = m2of
-    override val defocus: MemoryPV1[F, Double]                  = df
-    override val nodState: MemoryPV1[F, String]                 = ns
+    tapv  <- server.createPV(top + SadPrefix + TargetAName, Array.fill(8)(0.0))
+    tp1pv <- server.createPV(top + SadPrefix + TargetPwfs1Name, Array.fill(8)(0.0))
+    tp2pv <- server.createPV(top + SadPrefix + TargetPwfs2Name, Array.fill(8)(0.0))
+    toipv <- server.createPV(top + SadPrefix + TargetOiwfsName, Array.fill(8)(0.0))
+    pcr   <- PointingCorrectionReadout.build(server, top)
+    p1    <- PwfsMechsCommands.build(server, top, "pwfs1")
+    p2    <- PwfsMechsCommands.build(server, top, "pwfs2")
+  } yield new TcsSad[F] {
+    override val state: MemoryPV1[F, String]                       = st
+    override val health: MemoryPV1[F, String]                      = hlt
+    override val heartbeat: MemoryPV1[F, Int]                      = hb
+    override val programID: MemoryPV1[F, String]                   = pid
+    override val trackingLimits: TrackLimits[F]                    = tl
+    override val targets: AllTargets[F]                            = ts
+    override val sourceADiffRA: MemoryPV1[F, Double]               = dra
+    override val sourceADiffDec: MemoryPV1[F, Double]              = ddec
+    override val demands: Demands[F]                               = dms
+    override val currentCoords: CurrentCoords[F]                   = ccs
+    override val rotTrackFrame: MemoryPV1[F, String]               = rtf
+    override val domeVignette: DomeVignette[F]                     = dv
+    override val times: Times[F]                                   = t
+    override val astCtx: MemoryPV[F, Double]                       = actx
+    override val telCoords: TelescopeCoords[F]                     = tcoo
+    override val probeLimits: ProbeLimits[F]                       = prl
+    override val rawTargets: RawTargets[F]                         = rts
+    override val inPosition: MemoryPV1[F, String]                  = inp
+    override val virtualGuidersMap: VirtualGuidersMap[F]           = vgm
+    override val guidersTrackingConfig: NDGuidersTrackConfig[F]    = gtc
+    override val follows: FollowStat[F]                            = fls
+    override val parAngle: MemoryPV1[F, Double]                    = pa
+    override val agInPosCalc: MemoryPV1[F, Double]                 = agip
+    override val altair: AltairStat[F]                             = altr
+    override val guide: GuideStat[F]                               = gdst
+    override val nodChopStat: NodChopStat[F]                       = ncst
+    override val agStat: AGStat[F]                                 = agst
+    override val odgwParkStat: OdgwPark[F]                         = odprk
+    override val offsetStat: OffsetStat[F]                         = offs
+    override val instrAA: MemoryPV1[F, Double]                     = iaa
+    override val instrPA: MemoryPV1[F, Double]                     = ipa
+    override val airmass: Airmass[F]                               = am
+    override val m2UserOffset: MemoryPV1[F, Double]                = m2of
+    override val defocus: MemoryPV1[F, Double]                     = df
+    override val nodState: MemoryPV1[F, String]                    = ns
+    override val targetA: MemoryPV[F, Double]                      = tapv
+    override val targetPwfs1: MemoryPV[F, Double]                  = tp1pv
+    override val targetPwfs2: MemoryPV[F, Double]                  = tp2pv
+    override val targetOiwfs: MemoryPV[F, Double]                  = toipv
+    override val pointingCorrections: PointingCorrectionReadout[F] = pcr
+    override val pwfs1Mechs: PwfsMechsCommands[F]                  = p1
+    override val pwfs2Mechs: PwfsMechsCommands[F]                  = p2
   }
 }

@@ -3,8 +3,6 @@
 
 package tcssim.behavior
 
-import tcssim.TcsEpicsDB
-
 trait Behavior[F[_]] {
-  def process(db: TcsEpicsDB[F]): F[Unit]
+  def process: F[Unit]
 }

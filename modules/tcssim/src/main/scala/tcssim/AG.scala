@@ -4,29 +4,45 @@
 package tcssim
 
 import cats.effect.Resource
+import tcssim.AG.PwfsMechsStatus
 import tcssim.epics.EpicsServer
 import tcssim.epics.MemoryPV1
 import tcssim.epics.given
 
-sealed trait AG[F[_]] {
-  val health: MemoryPV1[F, String]
-  val port1: MemoryPV1[F, String]
-  val port2: MemoryPV1[F, String]
-  val port3: MemoryPV1[F, String]
-  val port4: MemoryPV1[F, String]
-  val port5: MemoryPV1[F, String]
-  val f2: MemoryPV1[F, Int]
-  val gsaoi: MemoryPV1[F, Int]
-  val nifs: MemoryPV1[F, Int]
-  val nirs: MemoryPV1[F, Int]
-  val niri: MemoryPV1[F, Int]
-  val gmos: MemoryPV1[F, Int]
-  val gpi: MemoryPV1[F, Int]
-  val ghost: MemoryPV1[F, Int]
-  val oiName: MemoryPV1[F, String]
-  val oiProbeParked: MemoryPV1[F, Int]
-  val oiFollowS: MemoryPV1[F, String]
-}
+private case class AG[F[_]](
+  health:        MemoryPV1[F, String],
+  port1:         MemoryPV1[F, String],
+  port2:         MemoryPV1[F, String],
+  port3:         MemoryPV1[F, String],
+  port4:         MemoryPV1[F, String],
+  port5:         MemoryPV1[F, String],
+  f2:            MemoryPV1[F, Int],
+  gsaoi:         MemoryPV1[F, Int],
+  nifs:          MemoryPV1[F, Int],
+  nirs:          MemoryPV1[F, Int],
+  niri:          MemoryPV1[F, Int],
+  gmos:          MemoryPV1[F, Int],
+  gpi:           MemoryPV1[F, Int],
+  ghost:         MemoryPV1[F, Int],
+  oiProbeParked: MemoryPV1[F, Int],
+  oiFollowS:     MemoryPV1[F, String],
+  oiName:        MemoryPV1[F, String],
+  p1ProbeParked: MemoryPV1[F, Int],
+  p1FollowS:     MemoryPV1[F, String],
+  p2ProbeParked: MemoryPV1[F, Int],
+  p2FollowS:     MemoryPV1[F, String],
+  aoName:        MemoryPV1[F, String],
+  hwName:        MemoryPV1[F, String],
+  sfName:        MemoryPV1[F, String],
+  sfParked:      MemoryPV1[F, Int],
+  hwParked:      MemoryPV1[F, Int],
+  sfRot:         MemoryPV1[F, Double],
+  sfTilt:        MemoryPV1[F, Double],
+  sfLin:         MemoryPV1[F, Double],
+  pwfs1Mechs:    PwfsMechsStatus[F],
+  pwfs2Mechs:    PwfsMechsStatus[F],
+  aoParked:      MemoryPV1[F, Int]
+)
 
 object AG {
   val PortSuffix: String          = "port:"
@@ -47,6 +63,7 @@ object AG {
   val GpiSuffix: String           = "gpi.VAL"
   val GhostSuffix: String         = "ghost.VAL"
   val AONameSuffix: String        = "aoName.VAL"
+  val HWNameSuffix: String        = "hwName.VAL"
   val SFNameSuffix: String        = "sfName.VAL"
   val SFParkedSuffix: String      = "sfParked.VAL"
   val HWParkedSuffix: String      = "hwParked.VAL"
@@ -58,37 +75,7 @@ object AG {
   val SFTilt: String              = "sfTilt.VAL"
   val SFLin: String               = "sfLin.VAL"
   val Health: String              = "health.VAL"
-
-  private case class AGImpl[F[_]](
-    health:        MemoryPV1[F, String],
-    port1:         MemoryPV1[F, String],
-    port2:         MemoryPV1[F, String],
-    port3:         MemoryPV1[F, String],
-    port4:         MemoryPV1[F, String],
-    port5:         MemoryPV1[F, String],
-    f2:            MemoryPV1[F, Int],
-    gsaoi:         MemoryPV1[F, Int],
-    nifs:          MemoryPV1[F, Int],
-    nirs:          MemoryPV1[F, Int],
-    niri:          MemoryPV1[F, Int],
-    gmos:          MemoryPV1[F, Int],
-    gpi:           MemoryPV1[F, Int],
-    ghost:         MemoryPV1[F, Int],
-    oiProbeParked: MemoryPV1[F, Int],
-    oiFollowS:     MemoryPV1[F, String],
-    oiName:        MemoryPV1[F, String],
-    p1ProbeParked: MemoryPV1[F, Int],
-    p1FollowS:     MemoryPV1[F, String],
-    p2ProbeParked: MemoryPV1[F, Int],
-    p2FollowS:     MemoryPV1[F, String],
-    aoName:        MemoryPV1[F, String],
-    sfName:        MemoryPV1[F, String],
-    sfParked:      MemoryPV1[F, Int],
-    hwParked:      MemoryPV1[F, Int],
-    sfRot:         MemoryPV1[F, Double],
-    sfTilt:        MemoryPV1[F, Double],
-    sfLin:         MemoryPV1[F, Double]
-  ) extends AG[F]
+  val AoParked: String            = "aoParked.VAL"
 
   def build[F[_]](server: EpicsServer[F], top: String): Resource[F, AG[F]] = for {
     hlt           <- server.createPV1(top + Health, "GOOD")
@@ -106,6 +93,7 @@ object AG {
     gpi           <- server.createPV1(top + PortSuffix + GpiSuffix, 0)
     ghost         <- server.createPV1(top + PortSuffix + GhostSuffix, 0)
     aoName        <- server.createPV1(top + AONameSuffix, "")
+    hwName        <- server.createPV1(top + HWNameSuffix, "")
     sfName        <- server.createPV1(top + SFNameSuffix, "")
     oiName        <- server.createPV1(top + OISuffix + OINameSuffix, "OIWFS")
     oiProbeParked <- server.createPV1(top + OISuffix + OIProbeParkedSuffix, 0)
@@ -120,7 +108,10 @@ object AG {
     sfRot         <- server.createPV1(top + SFRot, 0.0)
     sfTilt        <- server.createPV1(top + SFTilt, 0.0)
     sfLin         <- server.createPV1(top + SFLin, 0.0)
-  } yield AGImpl(
+    p1            <- PwfsMechsStatus.build(server, top, "p1")
+    p2            <- PwfsMechsStatus.build(server, top, "p2")
+    aop           <- server.createPV1(top + AoParked, 0)
+  } yield AG(
     hlt,
     port1,
     port2,
@@ -143,11 +134,32 @@ object AG {
     p2ProbeParked,
     p2FollowS,
     aoName,
+    hwName,
     sfName,
     sfParked,
     hwParked,
     sfRot,
     sfTilt,
-    sfLin
+    sfLin,
+    p1,
+    p2,
+    aop
   )
+
+  case class PwfsMechsStatus[F[_]](
+    filter:    MemoryPV1[F, String],
+    fieldStop: MemoryPV1[F, String]
+  )
+
+  object PwfsMechsStatus {
+    def build[F[_]](
+      server: EpicsServer[F],
+      top:    String,
+      name:   String
+    ): Resource[F, PwfsMechsStatus[F]] = for {
+      flt <- server.createPV1(s"$top$name:filterName.VAL", "neutral")
+      fst <- server.createPV1(s"$top$name:fldstopName.VAL", "open1")
+    } yield PwfsMechsStatus(flt, fst)
+  }
+
 }

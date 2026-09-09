@@ -13,16 +13,19 @@ import CadUtil.*
 
 trait CadRecord2[F[_]] extends CadRecord1[F] {
   val inputB: MemoryPV1[F, String]
+  val outputB: MemoryPV1[F, String]
   override def inputs: List[MemoryPV1[F, String]] = super.inputs :+ inputB
 }
 
 object CadRecord2 {
 
   private case class CadRecord2Impl[F[_]: Monad](
-    override val DIR:    MemoryPV1[F, CadDirective],
-    override val MARK:   MemoryPV1[F, Int],
-    override val inputA: MemoryPV1[F, String],
-    inputB:              MemoryPV1[F, String]
+    override val DIR:     MemoryPV1[F, CadDirective],
+    override val MARK:    MemoryPV1[F, Int],
+    override val inputA:  MemoryPV1[F, String],
+    override val inputB:  MemoryPV1[F, String],
+    override val outputA: MemoryPV1[F, String],
+    override val outputB: MemoryPV1[F, String]
   ) extends CadRecord.CadRecordImpl[F]
       with CadRecord2[F]
 
@@ -34,5 +37,7 @@ object CadRecord2 {
     mark <- server.createPV1(cadName + MarkSuffix, 0)
     a    <- server.createPV1(cadName + InputASuffix, "")
     b    <- server.createPV1(cadName + InputBSuffix, "")
-  } yield CadRecord2Impl(dir, mark, a, b)
+    vala <- server.createPV1(cadName + OutputASuffix, "")
+    valb <- server.createPV1(cadName + OutputBSuffix, "")
+  } yield CadRecord2Impl(dir, mark, a, b, vala, valb)
 }
