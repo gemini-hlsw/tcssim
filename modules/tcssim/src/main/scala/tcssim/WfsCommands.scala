@@ -11,15 +11,17 @@ import tcssim.epics.MemoryPV1
 import tcssim.epics.given
 
 case class WfsCommands[F[_]](
-  gains:      CadRecord4[F],
-  resetGains: MemoryPV1[F, Double]
+  gains:          CadRecord4[F],
+  resetGains:     MemoryPV1[F, Double],
+  circularBuffer: CadRecord4[F]
 ) {
-  val cads: List[CadRecord[F]] = List(gains)
+  val cads: List[CadRecord[F]] = List(gains, circularBuffer)
 }
 
 object WfsCommands {
 
-  val GainsCadName: String = "dc:detSigInitFgGain"
+  val GainsCadName: String       = "dc:detSigInitFgGain"
+  val CircularBufferName: String = "dc:detSigSaveCb"
 
   def build[F[_]: Monad](
     server:        EpicsServer[F],
@@ -28,6 +30,7 @@ object WfsCommands {
   ): Resource[F, WfsCommands[F]] = for {
     gains <- CadRecord4.build(server, top + GainsCadName)
     rst   <- server.createPV1(top + gainResetName, 0.0)
-  } yield WfsCommands(gains, rst)
+    cbuf  <- CadRecord4.build(server, top + CircularBufferName)
+  } yield WfsCommands(gains, rst, cbuf)
 
 }

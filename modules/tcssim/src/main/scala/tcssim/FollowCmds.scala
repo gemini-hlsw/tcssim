@@ -10,6 +10,7 @@ import tcssim.epics.EpicsServer
 
 trait FollowCmds[F[_]] {
   val mount: CadRecord1[F]
+  val m2: CadRecord1[F]
   val rotator: CadRecord1[F]
   val pwfs1: CadRecord1[F]
   val pwfs2: CadRecord1[F]
@@ -28,6 +29,7 @@ trait FollowCmds[F[_]] {
 
 object FollowCmds {
   val MountSuffix: String   = "mcFollow"
+  val M2Suffix: String      = "m2Follow"
   val RotatorSuffix: String = "crFollow"
   val Pwfs1Suffix: String   = "pwfs1Follow"
   val Pwfs2Suffix: String   = "pwfs2Follow"
@@ -43,6 +45,7 @@ object FollowCmds {
 
   private case class FollowCmdsImpl[F[_]](
     mount:   CadRecord1[F],
+    m2:      CadRecord1[F],
     rotator: CadRecord1[F],
     pwfs1:   CadRecord1[F],
     pwfs2:   CadRecord1[F],
@@ -59,6 +62,7 @@ object FollowCmds {
     override def cads: List[CadRecord[F]] =
       List(
         mount,
+        m2,
         rotator,
         pwfs1,
         pwfs2,
@@ -78,6 +82,7 @@ object FollowCmds {
   def build[F[_]: Monad](server: EpicsServer[F], top: String): Resource[F, FollowCmds[F]] =
     for {
       mnt   <- CadRecord1.build(server, top + MountSuffix)
+      m2    <- CadRecord1.build(server, top + M2Suffix)
       cr    <- CadRecord1.build(server, top + RotatorSuffix)
       pwfs1 <- CadRecord1.build(server, top + Pwfs1Suffix)
       pwfs2 <- CadRecord1.build(server, top + Pwfs2Suffix)
@@ -91,6 +96,7 @@ object FollowCmds {
       odgw3 <- CadRecord1.build(server, top + Odgw3Suffix)
       odgw4 <- CadRecord1.build(server, top + Odgw4Suffix)
     } yield FollowCmdsImpl(mnt,
+                           m2,
                            cr,
                            pwfs1,
                            pwfs2,
