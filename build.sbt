@@ -4,7 +4,7 @@ version := "0.1.0-SNAPSHOT"
 
 name := "tcssim"
 
-scalaVersion := "3.6.4"
+scalaVersion := "3.7.2"
 
 lazy val epics = project
   .in(file("./modules/epics"))

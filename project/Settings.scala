@@ -5,26 +5,26 @@ object Settings {
 
   object LibraryVersion {
     // Scala libraries
-    lazy val catsEffect = "3.6.1"
+    lazy val catsEffect = "3.6.4"
     lazy val cats       = "2.13.0"
-    lazy val mouse      = "1.3.2"
+    lazy val mouse      = "1.4.0"
     lazy val fs2        = "3.12.0"
     lazy val kittens    = "3.5.0"
 
-    lazy val munit           = "1.1.1"
-    lazy val munitCatsEffect = "2.1.0"
+    lazy val munit           = "1.3.6"
+    lazy val munitCatsEffect = "2.2.0"
     lazy val munitDiscipline = "2.0.0"
 
     // EPICS Libraries
-    lazy val jca = "2.4.10"
+    lazy val jca = "2.4.12"
 
     // Lucuma
-    lazy val lucumaCore = "0.125.0"
+    lazy val lucumaCore = "0.135.1"
 
-    val slf4j    = "2.0.17"
+    val slf4j    = "2.0.19"
     val log4s    = "1.10.0"
     val log4cats = "2.7.1"
-    val logback  = "1.5.18"
+    val logback  = "1.5.38"
     val janino   = "3.1.12"
   }
 

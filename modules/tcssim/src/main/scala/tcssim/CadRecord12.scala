@@ -15,26 +15,41 @@ trait CadRecord12[F[_]] extends CadRecord9[F] {
   val inputJ: MemoryPV1[F, String]
   val inputK: MemoryPV1[F, String]
   val inputL: MemoryPV1[F, String]
+  val outputJ: MemoryPV1[F, String]
+  val outputK: MemoryPV1[F, String]
+  val outputL: MemoryPV1[F, String]
   override def inputs: List[MemoryPV1[F, String]] = super.inputs ++ List(inputJ, inputK, inputL)
 }
 
 object CadRecord12 {
 
   private case class CadRecord12Impl[F[_]: Monad](
-    DIR:               MemoryPV1[F, CadDirective],
-    override val MARK: MemoryPV1[F, Int],
-    inputA:            MemoryPV1[F, String],
-    inputB:            MemoryPV1[F, String],
-    inputC:            MemoryPV1[F, String],
-    inputD:            MemoryPV1[F, String],
-    inputE:            MemoryPV1[F, String],
-    inputF:            MemoryPV1[F, String],
-    inputG:            MemoryPV1[F, String],
-    inputH:            MemoryPV1[F, String],
-    inputI:            MemoryPV1[F, String],
-    inputJ:            MemoryPV1[F, String],
-    inputK:            MemoryPV1[F, String],
-    inputL:            MemoryPV1[F, String]
+    override val DIR:     MemoryPV1[F, CadDirective],
+    override val MARK:    MemoryPV1[F, Int],
+    override val inputA:  MemoryPV1[F, String],
+    override val inputB:  MemoryPV1[F, String],
+    override val inputC:  MemoryPV1[F, String],
+    override val inputD:  MemoryPV1[F, String],
+    override val inputE:  MemoryPV1[F, String],
+    override val inputF:  MemoryPV1[F, String],
+    override val inputG:  MemoryPV1[F, String],
+    override val inputH:  MemoryPV1[F, String],
+    override val inputI:  MemoryPV1[F, String],
+    override val inputJ:  MemoryPV1[F, String],
+    override val inputK:  MemoryPV1[F, String],
+    override val inputL:  MemoryPV1[F, String],
+    override val outputA: MemoryPV1[F, String],
+    override val outputB: MemoryPV1[F, String],
+    override val outputC: MemoryPV1[F, String],
+    override val outputD: MemoryPV1[F, String],
+    override val outputE: MemoryPV1[F, String],
+    override val outputF: MemoryPV1[F, String],
+    override val outputG: MemoryPV1[F, String],
+    override val outputH: MemoryPV1[F, String],
+    override val outputI: MemoryPV1[F, String],
+    override val outputJ: MemoryPV1[F, String],
+    override val outputK: MemoryPV1[F, String],
+    override val outputL: MemoryPV1[F, String]
   ) extends CadRecord.CadRecordImpl[F]
       with CadRecord12[F]
 
@@ -56,5 +71,43 @@ object CadRecord12 {
     j    <- server.createPV1(cadName + InputJSuffix, "")
     k    <- server.createPV1(cadName + InputKSuffix, "")
     l    <- server.createPV1(cadName + InputLSuffix, "")
-  } yield CadRecord12Impl(dir, mark, a, b, c, d, e, f, g, h, i, j, k, l)
+    vala <- server.createPV1(cadName + OutputASuffix, "")
+    valb <- server.createPV1(cadName + OutputBSuffix, "")
+    valc <- server.createPV1(cadName + OutputCSuffix, "")
+    vald <- server.createPV1(cadName + OutputDSuffix, "")
+    vale <- server.createPV1(cadName + OutputESuffix, "")
+    valf <- server.createPV1(cadName + OutputFSuffix, "")
+    valg <- server.createPV1(cadName + OutputGSuffix, "")
+    valh <- server.createPV1(cadName + OutputHSuffix, "")
+    vali <- server.createPV1(cadName + OutputISuffix, "")
+    valj <- server.createPV1(cadName + OutputJSuffix, "")
+    valk <- server.createPV1(cadName + OutputKSuffix, "")
+    vall <- server.createPV1(cadName + OutputLSuffix, "")
+  } yield CadRecord12Impl(dir,
+                          mark,
+                          a,
+                          b,
+                          c,
+                          d,
+                          e,
+                          f,
+                          g,
+                          h,
+                          i,
+                          j,
+                          k,
+                          l,
+                          vala,
+                          valb,
+                          valc,
+                          vald,
+                          vale,
+                          valf,
+                          valg,
+                          valh,
+                          vali,
+                          valj,
+                          valk,
+                          vall
+  )
 }
