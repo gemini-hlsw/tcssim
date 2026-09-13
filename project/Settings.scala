@@ -19,7 +19,7 @@ object Settings {
     lazy val jca = "2.4.12"
 
     // Lucuma
-    lazy val lucumaCore = "0.135.1"
+    lazy val lucumaCore = "0.248.0"
 
     val slf4j    = "2.0.19"
     val log4s    = "1.10.0"
